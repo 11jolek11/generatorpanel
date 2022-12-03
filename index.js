@@ -47,11 +47,35 @@ function register(){
         // console.log('not doubled');
         global_register.push(obj)
         const dev = document.getElementById('registerlist');
-        const payload = '<div><p>Name: ' + obj.name + '</p><p>IP: '+ obj.ip +'</p><p>Port: '+ obj.port + '</p><p>Interface id: '+ obj.uuid +'</p><button>Start</button></div>';
+        const payload = `<div style="border:thin" class="Item", id=${obj.name}><p>Name: ${obj.name}</p><p>IP: ${obj.ip}</p><p>Port: ${obj.port}</p><p>Interface id: ${obj.uuid}\
+        </p><input type="button" value=${obj.name}>Status</input><input type="button" value=${obj.name} onclick="stop_generator(this)">Stop</input></div>`;
         dev.innerHTML += payload;
     };
-    
-
     }  
 }
 
+function stop_generator(button) {
+    // global_register.forEach(element => {
+    for (let i = 0; i < global_register.length; i++){
+        const element = global_register[i];
+        var requestOptions = {
+            method: 'POST',
+            redirect: 'follow',
+            mode: 'no-cors',
+          };
+        if (element.name == button.value){       
+            const element_to_del = document.getElementById(button.value);
+            element_to_del.remove();
+            global_register.splice(i, 1);
+            fetch(`http://${element.ip}:${element.port}/${button.value}/stop`, requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+        }
+    // });
+ };
+}
+
+
+// TODO: implement edit config
+// TODO: import manual start for first generator
