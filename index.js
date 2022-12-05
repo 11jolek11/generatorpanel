@@ -27,7 +27,7 @@ function register(){
     function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:" + responseObject.errorMessage);
-        if(confirm('Connection with server broken. Reconnect?')){
+        if(confirm('Connection with broker broken. Reconnect?')){
             register();
         }
     }
@@ -47,8 +47,15 @@ function register(){
         // console.log('not doubled');
         global_register.push(obj)
         const dev = document.getElementById('registerlist');
-        const payload = `<div style="border:thin" class="Item", id=${obj.name}><p>Name: ${obj.name}</p><p>IP: ${obj.ip}</p><p>Port: ${obj.port}</p><p>Interface id: ${obj.uuid}\
-        </p><input type="button" value=${obj.name}>Status</input><input type="button" value=${obj.name} onclick="stop_generator(this)">Stop</input></div>`;
+        const payload = 
+        `<div style="border:thin" class="Item", id=${obj.name}>\
+            <p>Name: ${obj.name}</p><p>Interface IP: ${obj.ip}</p>\
+            <p>Port: ${obj.port}</p>\
+            <p>Interface id: ${obj.uuid}</p>\
+            <input type="button" value=${obj.name} onclick="status_generator(this)">Status</input>\
+                <p id="status-${obj.name}"></p>\
+            <input type="button" value=${obj.name} onclick="stop_generator(this)">Stop</input>\
+        </div>`;
         dev.innerHTML += payload;
     };
     }  
@@ -61,7 +68,7 @@ function stop_generator(button) {
         var requestOptions = {
             method: 'POST',
             redirect: 'follow',
-            mode: 'no-cors',
+            // mode: 'no-cors',
           };
         if (element.name == button.value){       
             const element_to_del = document.getElementById(button.value);
@@ -76,6 +83,57 @@ function stop_generator(button) {
  };
 }
 
+function start_generator(){
+    
+}
 
-// TODO: implement edit config
-// TODO: import manual start for first generator
+function status_generator(button) {
+
+    var requestOptions = {
+        method: 'POST',
+        redirect: 'follow',
+        mode: 'cors',
+      };
+      
+      for (let i = 0; i < global_register.length; i++){
+        const element = global_register[i];
+        if (element.name == button.value){
+        fetch(`http://${element.ip}:${element.port}/${button.value}/status`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                tekst_holder = document.getElementById(`status-${element.name}`);
+                tekst_holder.innerText = result.status
+            })
+            .catch(error => console.log('error', error));
+        }
+    }
+}
+
+
+
+
+
+
+    // global_register.forEach(element => {
+//     for (let i = 0; i < global_register.length; i++){
+//         const element = global_register[i];
+//         var requestOptions = {
+//             method: 'POST',
+//             redirect: 'follow',
+//             // mode: 'no-cors',
+//           };
+
+//         temp = ''
+//         if (element.name == button.value){       
+//             fetch(`http://${element.ip}:${element.port}/${button.value}/status`, requestOptions)
+//                 .then(response => {return response.text()})
+//                 .then((jsona) => {console.log(jsona)})
+//                 .catch(error => console.log('error', error));
+//         }
+
+//     // });
+//  };
+// }
+
+// TODO: zrob panel ktory pozwoli uruchomić lub zmodyfikować generator 
+// TODO: podpiąć button status do backendu

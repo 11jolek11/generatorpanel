@@ -9,17 +9,33 @@
     <script type="text/javascript" src="index.js" defer></script>
 </head>
 <body onload="register()">
+    <div id="command">
+        <p>strart your generator</p>
+        <div>
+            <label for="data_source">Source: </label>
+            <input type="text" id="data_source" name=""><br><br>
+            <label for="channel">Channel: </label>
+            <input type="text" id="channel"><br><br>
+            <label for="frequency">Frequency: </label>
+            <input type="number" id="frequency"><br><br>
+            <p>MQTT</p>
+            <label for="mqttbroker">Broker adress: </label>
+            <input type="text" id="mqttbroker"><br><br>
+            <label for="mqttport">Broker port</label>
+            <input type="number" id="mqttport"><br><br>
+            <label for="mqtttopic">Topic to publish on: </label>
+            <input type="text" id="mqtttopic"><br><br>
+            <p>HTTP</p>
+            <label for="httphost">Recipient IP adress: </label>
+            <input type="text" id="httphost"><br><br>
+            <label for="httpport">Port: </label>
+            <input type="number" id="httpport"><br><br>
+            <button type="submit">Start</button>
+        </div>
+    </div>
     <div id="register">
         <p>Avaible generators</p>
-        <!-- <button type="submit", onclick="register()">Refresh</button> -->
-        <div id="registerlist">
-            
-        </div>
-        <!-- <button type="reset", value="test">OK</button> -->
+        <div id="registerlist"></div>
     </div>
 </body>
 </html>
-
-<!-- <div>
-<p>Name: </p><p>IP</p><p>Port: </p><button>Start</button> -->
-<!-- </div> --> 
