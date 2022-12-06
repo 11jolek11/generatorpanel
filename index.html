@@ -5,32 +5,49 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .common-edit{
+            display: none;
+        }
+
+        .item{
+            background-color: darkgrey;
+            padding: 2mm;
+            border: 2mm, black;
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
     <script type="text/javascript" src="index.js" defer></script>
 </head>
 <body onload="register()">
+    <label for="ip">IP: </label>
+    <input type="text" id="ip" name="" class="field"><br><br>
+    <label for="port">Channel: </label>
+    <input type="text" id="port" name="" class="field"><br><br>
+    <label for="name">Name: </label>
+    <input type="text" id="name" name="" class="field"><br><br>
     <div id="command">
-        <p>strart your generator</p>
+        <p>start your generator</p>
         <div>
             <label for="data_source">Source: </label>
-            <input type="text" id="data_source" name=""><br><br>
+            <input type="text" id="data_source" name="" class="subfield"><br><br>
             <label for="channel">Channel: </label>
-            <input type="text" id="channel"><br><br>
+            <input type="text" id="channel" class="subfield"><br><br>
             <label for="frequency">Frequency: </label>
-            <input type="number" id="frequency"><br><br>
+            <input type="number" id="frequency" class="subfield"><br><br>
             <p>MQTT</p>
             <label for="mqttbroker">Broker adress: </label>
-            <input type="text" id="mqttbroker"><br><br>
+            <input type="text" id="mqttbroker" class="subfield"><br><br>
             <label for="mqttport">Broker port</label>
-            <input type="number" id="mqttport"><br><br>
+            <input type="number" id="mqttport" class="subfield"><br><br>
             <label for="mqtttopic">Topic to publish on: </label>
-            <input type="text" id="mqtttopic"><br><br>
+            <input type="text" id="mqtttopic" class="subfield"><br><br>
             <p>HTTP</p>
             <label for="httphost">Recipient IP adress: </label>
-            <input type="text" id="httphost"><br><br>
+            <input type="text" id="httphost" class="subfield"><br><br>
             <label for="httpport">Port: </label>
-            <input type="number" id="httpport"><br><br>
-            <button type="submit">Start</button>
+            <input type="number" id="httpport" class="subfield"><br><br>
+            <button type="submit" onclick="first_generator()">Start</button>
         </div>
     </div>
     <div id="register">
