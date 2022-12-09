@@ -1,29 +1,6 @@
 {
-  "name": "generatorpanel",
-  "version": "0.0.1",
-  "description": "Control panel for generator controller",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/11jolek11/generatorpanel.git"
-  },
-  "keywords": [
-    "generator",
-    "data",
-    "panel",
-    "control"
-  ],
-  "author": "11jolek11",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/11jolek11/generatorpanel/issues"
-  },
-  "homepage": "https://github.com/11jolek11/generatorpanel#readme",
   "dependencies": {
-    "axios": "^1.2.0",
+    "axios": "^1.2.1",
     "mqtt": "^4.3.7"
   }
 }
