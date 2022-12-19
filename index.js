@@ -19,7 +19,6 @@ function register(){
     });
     
     function onConnect() {
-    // Once a connection has been made, make a subscription and send a message.
     console.log("Connected with Server");
     client.subscribe("waitroom459");
     }
@@ -38,23 +37,8 @@ function register(){
     message = new Paho.MQTT.Message(obj.uuid);
     message.destinationName = 'transaction_channel';
     client.send(message);
-    // console.log(obj);
-    // console.log('history');
-    // console.log(global_register.slice(-1)[0]);
-    // global_register.push(obj);
-    // global_register.slice(-1)[0]  obj
     if (JSON.stringify(global_register.slice(-1)[0]) !== JSON.stringify(obj)){
         const dev = document.getElementById('registerlist');
-        // console.log('not doubled');
-
-        // for (i = 0; i < global_register.length; i++){
-        //     if (global_register[i].uuid == obj.uuid && global_register[i].uuid == obj.uuid){
-        //         delete global_register[i]
-        //     }
-        // }
-        // FIXME: possible problem
-        // const element_to_del = document.getElementById(obj.name);
-        // element_to_del.remove();
         global_register.push(obj)
         const payload = 
         `<div class="item", id=${obj.name}>\
@@ -94,38 +78,30 @@ function register(){
     }  
 }
 
-// <input type="button" id="start-${obj.name}" value=${obj.name} onclick="start_generator(this)">Send</input>
 
 function stop_generator(button) {
-    // global_register.forEach(element => {
     for (let i = 0; i < global_register.length; i++){
         const element = global_register[i];
         var requestOptions = {
             method: 'POST',
             redirect: 'follow',
-            // mode: 'no-cors',
           };
         if (element.name == button.value){       
-            // const element_to_del = document.getElementById(button.value);
-            // element_to_del.remove();
-            // global_register.splice(i, 1);
+
             fetch(`http://${element.ip}:${element.port}/${button.value}/stop`, requestOptions)
                 .then(response => response.text())
                 .then(result => console.log(result))
                 .catch(error => console.log('error', error));
         }
-    // });
  };
 }
 
 function exit_generator(button) {
-    // global_register.forEach(element => {
     for (let i = 0; i < global_register.length; i++){
         const element = global_register[i];
         var requestOptions = {
             method: 'POST',
             redirect: 'follow',
-            // mode: 'no-cors',
           };
         if (element.name == button.value){       
             const element_to_del = document.getElementById(button.value);
@@ -136,7 +112,6 @@ function exit_generator(button) {
                 .then(result => console.log(result))
                 .catch(error => console.log('error', error));
         }
-    // });
  };
 }
 
@@ -179,25 +154,20 @@ function hide(button) {
 
 function start_generator(button){
     let json_parse = {}
-    // console.log('1');
     for (let i = 0; i < global_register.length; i++){
         var data_source = '';
         var url = '';
-        // console.log('2');
         let temp = [];
         const element = global_register[i];
-        // console.log(element.name + ' - ' + button.value);
         if (element.name == button.value){
             console.log('#####');
             console.log(JSON.parse(element.config).data.source);
             console.log('#####');
             data_source = JSON.parse(element.config).data.source;
-            // console.log('3');
             url = `http://${element.ip}:${element.port}/${button.value}/start`;
             var targetInput = document.getElementById(`edit-${element.name}`).getElementsByClassName("_input");
             for (i = 0; i < targetInput.length; i++){
                 temp.push(targetInput[i].value)
-                // console.log(targetInput[i].value);
             }
         }
         console.log(data_source);
@@ -219,7 +189,6 @@ function start_generator(button){
             }
         };
     };
-        // json_parse = JSON.parse(str_parse);
         console.log(JSON.stringify(json_parse));
         x = fetch(
             url,
@@ -230,32 +199,26 @@ function start_generator(button){
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(json_parse)
-                // body: str_parse,
               });
     }; 
 
 
 function start_generator(button){
     let json_parse = {}
-    // console.log('1');
     for (let i = 0; i < global_register.length; i++){
         var data_source = '';
         var url = '';
-        // console.log('2');
         let temp = [];
         const element = global_register[i];
-        // console.log(element.name + ' - ' + button.value);
         if (element.name == button.value){
             console.log('#####');
             console.log(JSON.parse(element.config).data.source);
             console.log('#####');
             data_source = JSON.parse(element.config).data.source;
-            // console.log('3');
             url = `http://${element.ip}:${element.port}/${button.value}/start`;
             var targetInput = document.getElementById(`edit-${element.name}`).getElementsByClassName("_input");
             for (i = 0; i < targetInput.length; i++){
                 temp.push(targetInput[i].value)
-                // console.log(targetInput[i].value);
             }
         }
         console.log(data_source);
@@ -277,7 +240,6 @@ function start_generator(button){
             }
         };
     };
-        // json_parse = JSON.parse(str_parse);
         console.log(JSON.stringify(json_parse));
         x = fetch(
             url,
@@ -288,7 +250,6 @@ function start_generator(button){
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(json_parse)
-                // body: str_parse,
               });
     }; 
 
@@ -304,27 +265,7 @@ function first_generator(){
     for (i = 0; i < targetInput.length; i++){
         temp.push(targetInput[i].value);
     }
-    // console.log('1');
-    // for (let i = 0; i < global_register.length; i++){
-        // var data_source = '';
-        // var url = '';
-        // console.log('2');
-        // let temp = [];
-        // const element = global_register[i];
-        // console.log(element.name + ' - ' + button.value);
-        // if (element.name == button.value){
-            // console.log('#####');
-            // console.log(JSON.parse(element.config).data.source);
-            // console.log('#####');
-            // data_source = JSON.parse(element.config).data.source;
-            // // console.log('3');
-            // url = `http://${element.ip}:${element.port}/${button.value}/start`;
-            // var targetInput = document.getElementById(`man-edit-${element.name}`).getElementsByClassName("man_input");
-            // for (i = 0; i < targetInput.length; i++){
-            //     temp.push(targetInput[i].value)
-                // console.log(targetInput[i].value);
-        //     }
-        // }
+
         json_parse = {
             data: {
                 source: temp[0],
@@ -343,7 +284,6 @@ function first_generator(){
         };
 
         var url = `http://${ip}:${port}/${name}/start`;
-        // json_parse = JSON.parse(str_parse);
         console.log(JSON.stringify(json_parse));
         x = fetch(
             url,
@@ -354,61 +294,5 @@ function first_generator(){
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(json_parse)
-                // body: str_parse,
               });
     }; 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// global_register.forEach(element => {
-//    for (let i = 0; i < global_register.length; i++){
-//        const element = global_register[i];
-//        var requestOptions = {
-//            method: 'POST',
-//             redirect: 'follow',
-//             // mode: 'no-cors',
-//           };
-
-//         temp = ''
-//         if (element.name == button.value){       
-//             fetch(`http://${element.ip}:${element.port}/${button.value}/status`, requestOptions)
-//                 .then(response => {return response.text()})
-//                 .then((jsona) => {console.log(jsona)})
-//                 .catch(error => console.log('error', error));
-//         }
-
-//     // });
-//  };
-// }
-
-// TODO: zrob panel ktory pozwoli uruchomić po raz pierwszy generator
-// TODO: zrób tak aby usuwał duplikujące się panele 
-// TODO: przycisk wznów
