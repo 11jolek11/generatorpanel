@@ -20,7 +20,7 @@
     <script type="text/javascript" src="index.js" defer></script>
     <script type="text/javascript" src="agregator.js" defer></script>
 </head>
-<body onload="register()">
+<body onload="register(); agregator_register()">
     <label for="ip">IP: </label>
     <input type="text" id="ip" name="" class="field"><br><br>
     <label for="port">Channel: </label>
@@ -54,6 +54,10 @@
     <div id="register">
         <p>Avaible generators</p>
         <div id="registerlist"></div>
+    </div>
+    <div id="agregator">
+        <p>Avaible agregators</p>
+        <div id="agregator_registerlist"></div>
     </div>
 </body>
 </html>

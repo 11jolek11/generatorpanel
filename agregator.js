@@ -1,61 +1,68 @@
-let global_register = []
+let agregator_global_register = []
 
-function register(){
+function agregator_register(){
     let pahoConfig = {
         hostname: "test.mosquitto.org",  //The hostname is the url, under which your FROST-Server resides.
-        port: "8081",
+        port: "8080",
         path:'/mqtt',        //The port number is the WebSocket-Port,                            // not (!) the MQTT-Port. This is a Paho characteristic.
-        clientId: "11jolek11-panel",    //Should be unique for every of your client connections.
+        agr_clientId: "11jolek11-agregator",    //Should be unique for every of your client connections.
         keepAliveInterval: 0,
         // reconnect:true,
     }
     
-    client = new Paho.MQTT.Client(pahoConfig.hostname, Number(pahoConfig.port), pahoConfig.clientId);
-    client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
+
+    function agr_onConnect() {
+        console.log("Connected with Server");
+        agr_client.subscribe("agreg_register_8678855");
+    }
+
+    agr_client = new Paho.MQTT.Client(pahoConfig.hostname, Number(pahoConfig.port), pahoConfig.agr_clientId);
+    agr_client.onConnectionLost = agr_onConnectionLost;
+    agr_client.onMessageArrived = agr_onMessageArrived;
     
-    client.connect({
-    onSuccess: onConnect
+    agr_client.connect({
+    onSuccess: agr_onConnect
     });
     
-    function onConnect() {
-    console.log("Connected with Server");
-    client.subscribe("waitroom459");
-    }
+
     
-    function onConnectionLost(responseObject) {
+    function agr_onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:" + responseObject.errorMessage);
         if(confirm('Connection with broker broken. Reconnect?')){
-            register();
+            agregator_register();
         }
     }
     }
-    function onMessageArrived(message) {
+    function agr_onMessageArrived(message) {
     console.log("onMessageArrived:" + message.payloadString);
     var obj = JSON.parse(message.payloadString);
     message = new Paho.MQTT.Message(obj.uuid);
-    message.destinationName = 'transaction_channel';
-    client.send(message);
-    if (JSON.stringify(global_register.slice(-1)[0]) !== JSON.stringify(obj)){
+    message.destinationName = 'clock-76467';
+    agr_client.send(message);
+    if (JSON.stringify(agregator_global_register.slice(-1)[0]) !== JSON.stringify(obj)){
         const dev = document.getElementById('agregator_registerlist');
-        global_register.push(obj)
+        agregator_global_register.push(obj)
         const payload = 
-        `<div class="agregator", id=${obj.uuid}>\
+        `<div style="background-color:yellow;",  class="agregator", id=${obj.uuid}>\
             <input type="button" value=${obj.uuid} onclick="exit_agregator(this)">Delete</input>\
             <p>Name: ${obj.uuid}</p><p>Agregator IP: ${obj.ip}</p>\
             <p>Port: ${obj.port}</p>\
             <p>Agregator id: ${obj.uuid}</p>\
             <p>Config vector: ${obj.config}</p>\
             <input type="button" value=${obj.uuid} onclick="status_agregator(this)">Status</input>\
-                <p id="status-${obj.uuid}"></p>\
+            <p id="status-${obj.uuid}"></p>\
             <input type="button" value=${obj.uuid} onclick="stop_agregator(this)">Stop</input>\
             <input type="button" value=${obj.uuid} onclick="hide_agregator(this)">Edit</input>\
             <div id="edit-${obj.uuid}" class="agregator-common-edit">
+
                 <label for="channel">Channel: </label>
                 <input type="text" id="agregator_channel" class="agregator_input"><br><br>
                 <label for="frequency">Frequency: </label>
                 <input type="number" id="agregator_frequency" class="agregator_input"><br><br>
+                <label for="agregator_pack">Pack size: </label>
+                <input type="number" id="agregator_pack" class="agregator_input"><br><br>
+
                 <p>MQTT</p>
                 <label for="mqttbroker">Broker adress: </label>
                 <input type="text" id="agregator_mqttbroker" class="agregator_input"><br><br>
@@ -63,12 +70,25 @@ function register(){
                 <input type="number" id="agregator_mqttport" class="agregator_input"><br><br>
                 <label for="mqtttopic">Topic to publish on: </label>
                 <input type="text" id="agregator_mqtttopic" class="agregator_input"><br><br>
+                <label for="agregator_mqtt_listen_topic">Topic to listen on: </label>
+                <input type="text" id="agregator_mqtt_listen_topic" class="agregator_input"><br><br>
+
                 <p>HTTP</p>
                 <label for="httphost">Recipient IP adress: </label>
                 <input type="text" id="agregator_httphost" class="agregator_input"><br><br>
                 <label for="httpport">Port: </label>
                 <input type="number" id="agregator_httpport" class="agregator_input"><br><br>
-                <button type="submit" id="start-${obj.uuid}" value=${obj.uuid} onclick="start_agregator(this)">Send</button>
+                <label for="httpath">Path to resource: </label>
+                <input type="text" id="agregator_httppath" class="agregator_input"><br><br>
+
+                <p>Constraints</p>
+                <label for="agregator_select">Select: </label>
+                <input type="text" id="agregator_select" class="agregator_input"><br><br>
+                <label for="httpport">Function </label>
+                <input type="text" id="agregator_function" class="agregator_input"><br><br>
+                
+                <!-- <button type="submit" id="start-${obj.uuid}" value=${obj.uuid} onclick="start_agregator(this)">Send</button> -->
+                <button type="submit" id="start-${obj.uuid}" value=${obj.uuid} onclick="change_config_agregator(this)">Send</button>
             </div>
         </div>`;
         dev.innerHTML += payload;
@@ -80,15 +100,16 @@ function register(){
 
 
 function stop_agregator(button) {
-    for (let i = 0; i < global_register.length; i++){
-        const element = global_register[i];
+    for (let i = 0; i < agregator_global_register.length; i++){
+        const element = agregator_global_register[i];
         var requestOptions = {
             method: 'POST',
             redirect: 'follow',
           };
         if (element.uuid == button.value){       
 
-            fetch(`http://${element.ip}:${element.port}/${button.value}/stop`, requestOptions)
+            // fetch(`http://${element.ip}:${element.port}/stop`, requestOptions)
+            fetch(`http://${element.ip}:${element.port}/stop`, requestOptions)
                 .then(response => response.text())
                 .then(result => console.log(result))
                 .catch(error => console.log('error', error));
@@ -97,8 +118,8 @@ function stop_agregator(button) {
 }
 
 function exit_agregator(button) {
-    for (let i = 0; i < global_register.length; i++){
-        const element = global_register[i];
+    for (let i = 0; i < agregator_global_register.length; i++){
+        const element = agregator_global_register[i];
         var requestOptions = {
             method: 'POST',
             redirect: 'follow',
@@ -106,8 +127,9 @@ function exit_agregator(button) {
         if (element.uuid == button.value){       
             const element_to_del = document.getElementById(button.value);
             element_to_del.remove();
-            global_register.splice(i, 1);
-            fetch(`http://${element.ip}:${element.port}/${button.value}/stop`, requestOptions)
+            agregator_global_register.splice(i, 1);
+            // fetch(`http://${element.ip}:${element.port}/${button.value}/stop`, requestOptions)
+            fetch(`http://${element.ip}:${element.port}/stop`, requestOptions)
                 .then(response => response.text())
                 .then(result => console.log(result))
                 .catch(error => console.log('error', error));
@@ -115,7 +137,7 @@ function exit_agregator(button) {
  };
 }
 
-// Bacend not implemented yet
+// Backend not implemented yet
 function status_agregator(button) {
     var requestOptions = {
         method: 'POST',
@@ -123,10 +145,10 @@ function status_agregator(button) {
         mode: 'cors',
       };
       
-      for (let i = 0; i < global_register.length; i++){
-        const element = global_register[i];
+      for (let i = 0; i < agregator_global_register.length; i++){
+        const element = agregator_global_register[i];
         if (element.uuid == button.value){
-        fetch(`http://${element.ip}:${element.port}/${button.value}/status`, requestOptions)
+        fetch(`http://${element.ip}:${element.port}/status`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 tekst_holder = document.getElementById(`status-${element.uuid}`);
@@ -137,9 +159,9 @@ function status_agregator(button) {
     }
 }
 
-function agregator_hide(button) {
-    for (let i = 0; i < global_register.length; i++){
-        const element = global_register[i];
+function hide_agregator(button) {
+    for (let i = 0; i < agregator_global_register.length; i++){
+        const element = agregator_global_register[i];
         if (element.uuid == button.value){
             var x = document.getElementById(`edit-${element.uuid}`);
             if (x.style.display === "none") {
@@ -155,40 +177,47 @@ function agregator_hide(button) {
 
 function change_config_agregator(button){
     let json_parse = {}
-    for (let i = 0; i < global_register.length; i++){
+    for (let i = 0; i < agregator_global_register.length; i++){
         var data_source = '';
         var url = '';
         let temp = [];
-        const element = global_register[i];
+        const element = agregator_global_register[i];
         if (element.uuid == button.value){
             console.log('#####');
-            console.log(JSON.parse(element.config).data.source);
+            console.log(element.config);
             console.log('#####');
-            data_source = JSON.parse(element.config).data.source;
-            url = `http://${element.ip}:${element.port}/${button.value}/config`;
+            // data_source = JSON.parse(element.config).data.source;
+            // data_source = JSON.parse(element.config);
+            url = `http://${element.ip}:${element.port}/config`;
             var targetInput = document.getElementById(`edit-${element.uuid}`).getElementsByClassName("agregator_input");
             for (i = 0; i < targetInput.length; i++){
                 temp.push(targetInput[i].value)
             }
         }
         console.log(data_source);
+        console.log(temp);
 
-        json_parse = {
-            data: {
-                source: data_source,
-                channel: temp[0],
-                frequency: temp[1]
-            },
-            MQTT: {
-                broker: temp[2],
-                port: temp[3],
-                topic: temp[4]
-            },
-            HTTP: {
-                host: temp[5], 
-                port: temp[6]
+        json_parse = 
+        {
+            "method": temp[0],
+            "frequency": temp[1],
+            "pack_size": temp[2],
+            "mqtt":{
+                "broker": temp[3],
+                "broker_port": temp[4],
+                "send_topic": temp[5],
+                "recive_topic": temp[6]
+                },
+            "http":{
+                "destiantion": temp[7],
+                "destiantion_port": temp[8],
+                "destiantion_path": temp[9]
+                },
+            "constraints": {
+                "select": temp[10],
+                "function": temp[11]
+                }
             }
-        };
     };
         console.log(JSON.stringify(json_parse));
         x = fetch(
@@ -206,11 +235,11 @@ function change_config_agregator(button){
 
 function start_agregator(button){
     let json_parse = {}
-    for (let i = 0; i < global_register.length; i++){
+    for (let i = 0; i < agregator_global_register.length; i++){
         var data_source = '';
         var url = '';
         let temp = [];
-        const element = global_register[i];
+        const element = agregator_global_register[i];
         if (element.uuid == button.value){
             console.log('#####');
             console.log(JSON.parse(element.config).data.source);
