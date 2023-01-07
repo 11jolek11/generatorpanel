@@ -1,11 +1,11 @@
 let filter_global_register = []
 // TODO: rename all mqtt topics!!!
-
+// FIXME: find bug
 
 function filter_register(){
     let pahoConfig = {
         hostname: "test.mosquitto.org",  //The hostname is the url, under which your FROST-Server resides.
-        port: "8080",
+        port: "8081",
         path:'/mqtt',        //The port number is the WebSocket-Port,                            // not (!) the MQTT-Port. This is a Paho characteristic.
         agr_clientId: "11jolek11-filter",    //Should be unique for every of your client connections.
         keepAliveInterval: 0,
