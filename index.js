@@ -19,7 +19,7 @@ function register(){
     });
     
     function onConnect() {
-    console.log("Connected with Server");
+    console.log("Connected with Server (control)");
     client.subscribe("waitroom459");
     }
     

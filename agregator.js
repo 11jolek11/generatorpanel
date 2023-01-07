@@ -11,10 +11,7 @@ function agregator_register(){
     }
     
 
-    function agr_onConnect() {
-        console.log("Connected with Server");
-        agr_client.subscribe("agreg_register_8678855");
-    }
+
 
     agr_client = new Paho.MQTT.Client(pahoConfig.hostname, Number(pahoConfig.port), pahoConfig.agr_clientId);
     agr_client.onConnectionLost = agr_onConnectionLost;
@@ -24,7 +21,10 @@ function agregator_register(){
     onSuccess: agr_onConnect
     });
     
-
+    function agr_onConnect() {
+        console.log("Connected with Server (Agregator)");
+        agr_client.subscribe("agreg_register_8678855");
+    }
     
     function agr_onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {

@@ -12,31 +12,32 @@ function filter_register(){
         // reconnect:true,
     }
     
+    const agr_client = new Paho.MQTT.Client(pahoConfig.hostname, Number(pahoConfig.port), pahoConfig.agr_clientId);
+
+    agr_client.onMessageArrived = agr_onMessageArrived;
+    agr_client.onConnectionLost = agr_onConnectionLost;
+
+    agr_client.connect({
+        onSuccess: agr_onConnect
+        });
 
     function agr_onConnect() {
-        console.log("Connected with Server");
+        console.log("Connected with Server (Filter)");
         agr_client.subscribe("filter_register_8678855");
     }
-
-    agr_client = new Paho.MQTT.Client(pahoConfig.hostname, Number(pahoConfig.port), pahoConfig.agr_clientId);
-    agr_client.onConnectionLost = agr_onConnectionLost;
-    agr_client.onMessageArrived = agr_onMessageArrived;
-    
-    agr_client.connect({
-    onSuccess: agr_onConnect
-    });
-    
-
     
     function agr_onConnectionLost(responseObject) {
+        // console.log("Sending before connecting");
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:" + responseObject.errorMessage);
         if(confirm('Connection with broker broken. Reconnect?')){
-            filter_register();
+            // filter_register();
+            agr_client.rec
         }
     }
     }
     function agr_onMessageArrived(message) {
+        console.log("Message");
     console.log("onMessageArrived:" + message.payloadString);
     var obj = JSON.parse(message.payloadString);
     message = new Paho.MQTT.Message(obj.uuid);
