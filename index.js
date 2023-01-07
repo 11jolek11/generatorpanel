@@ -5,9 +5,9 @@ function register(){
         hostname: "test.mosquitto.org",  //The hostname is the url, under which your FROST-Server resides.
         port: "8081",
         path:'/mqtt',        //The port number is the WebSocket-Port,                            // not (!) the MQTT-Port. This is a Paho characteristic.
-        clientId: "11jolek11-panel",    //Should be unique for every of your client connections.
+        clientId: "11jolek11-panel".concat((Math.random() + 1).toString(36).substring(7)),    //Should be unique for every of your client connections.
         keepAliveInterval: 0,
-        // reconnect:true,
+        reconnect:true,
     }
     
     client = new Paho.MQTT.Client(pahoConfig.hostname, Number(pahoConfig.port), pahoConfig.clientId);

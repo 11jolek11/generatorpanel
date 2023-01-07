@@ -7,9 +7,9 @@ function filter_register(){
         hostname: "test.mosquitto.org",  //The hostname is the url, under which your FROST-Server resides.
         port: "8081",
         path:'/mqtt',        //The port number is the WebSocket-Port,                            // not (!) the MQTT-Port. This is a Paho characteristic.
-        agr_clientId: "11jolek11-filter",    //Should be unique for every of your client connections.
+        agr_clientId: "11jolek11-filter".concat((Math.random() + 1).toString(36).substring(7)),    //Should be unique for every of your client connections.
         keepAliveInterval: 0,
-        // reconnect:true,
+        reconnect:true,
     }
     
     const agr_client = new Paho.MQTT.Client(pahoConfig.hostname, Number(pahoConfig.port), pahoConfig.agr_clientId);
@@ -31,8 +31,8 @@ function filter_register(){
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:" + responseObject.errorMessage);
         if(confirm('Connection with broker broken. Reconnect?')){
-            // filter_register();
-            agr_client.rec
+            filter_register();
+            // agr_client.rec
         }
     }
     }
@@ -210,10 +210,10 @@ function change_config_filter(button){
             "http":{
                 "destiantion": temp[7],
                 "destiantion_port": temp[8],
-                "destiantion_path": temp[9]
+                "destiantion_path": '',
                 },
             "constraints": {
-                "query": temp[10],
+                "query": temp[9],
                 }
             }
     };
