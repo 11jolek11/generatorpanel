@@ -18,8 +18,10 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
     <script type="text/javascript" src="index.js" defer></script>
+    <script type="text/javascript" src="agregator.js" defer></script>
+    <script type="text/javascript" src="filter.js" defer></script>
 </head>
-<body onload="register()">
+<body onload="register(); agregator_register(); filter_register()">
     <label for="ip">IP: </label>
     <input type="text" id="ip" name="" class="field"><br><br>
     <label for="port">Channel: </label>
@@ -53,6 +55,14 @@
     <div id="register">
         <p>Avaible generators</p>
         <div id="registerlist"></div>
+    </div>
+    <div id="agregator">
+        <p>Avaible agregators</p>
+        <div id="agregator_registerlist"></div>
+    </div>
+    <div id="filter">
+        <p>Avaible filters</p>
+        <div id="filter_registerlist"></div>
     </div>
 </body>
 </html>
